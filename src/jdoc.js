@@ -112,7 +112,21 @@
                 }
             }
         });
-    }
+    };
+	
+	var _makePatternCheck = function(pattern) {
+        if (typeof pattern === 'function') {
+            return pattern;
+        } else if (pattern instanceof RegExp) {
+            return function(key) {
+                return pattern.test(key);
+            };
+        } else {
+            return function(key) {
+                return key === pattern;
+            };
+        }
+	};
     
     // public jDoc methods
     $.extend(jDoc.prototype, {
@@ -285,32 +299,38 @@
          *    pattern - (string) literal string used to match on property names
          *              (regexp) regular expression used to match on property names
          *              (function) function invoked with property name to determine the match
-         *    recurse - apply match recursively to objects in the current selection
          * Return:
          *    jdoc - selection of all matching properties in current jdoc selection
          */
-        match: function(pattern, recurse) {
+        match: function(pattern) {
             if (!this.hasValue()) {
                 return this;
             }
             
-            // determine condition
-            var condition;
-            if (typeof pattern === 'function') {
-                condition = pattern;
-            } else if (pattern instanceof RegExp) {
-                condition = function(key) {
-                    return pattern.test(key);
-                };
-            } else {
-                condition = function(key) {
-                    return key === pattern;
-                };
+            // collect matching fields
+            var result = [];
+			_match(this, _makePatternCheck(pattern), false, result);
+            return new jDoc(result, 0, this);
+        },
+        
+        /*
+         * Method: deepMatch
+         *    Returns selection of all matching properties at any nesting level in current jdoc selection.
+         * Parameters:
+         *    pattern - (string) literal string used to match on property names
+         *              (regexp) regular expression used to match on property names
+         *              (function) function invoked with property name to determine the match
+         * Return:
+         *    jdoc - selection of all matching properties at any nesting level in current jdoc selection
+         */
+        deepMatch: function(pattern) {
+            if (!this.hasValue()) {
+                return this;
             }
             
             // collect matching fields
             var result = [];
-			_match(this, condition, recurse, result);
+			_match(this, _makePatternCheck(pattern), true, result);
             return new jDoc(result, 0, this);
         }
     });

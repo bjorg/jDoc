@@ -51,14 +51,14 @@ $(function() {
         });
     };
     
-    test('', function() {
+    test("new jDoc(library)", function() {
     	var jdoc = new jDoc(library);
 		
 		equal(jdoc.any(), true, 'any');
 		equal(jdoc.count(), 1, 'count');
     });
     
-    test('', function() {
+    test("new jDoc(library).match('name')", function() {
     	var jdoc = new jDoc(library).match('name');
 		
 		equal(jdoc.any(), true, 'any');
@@ -66,7 +66,7 @@ $(function() {
 		equal(jdoc.text(), 'My Library', 'text')
     });
     
-    test('', function() {
+    test("new jDoc(library).match('address').match('street')", function() {
     	var jdoc = new jDoc(library).match('address').match('street');
 		
 		equal(jdoc.any(), true, 'any');
@@ -74,35 +74,42 @@ $(function() {
 		equal(jdoc.text(), 'Mockingbird Lane', 'text')
     });
     
-    test('', function() {
+    test("new jDoc(library).match('books')", function() {
     	var jdoc = new jDoc(library).match('books');
 		
 		equal(jdoc.any(), true, 'any');
 		equal(jdoc.count(), 3, 'count');
     });
     
-    test('', function() {
+    test("new jDoc(library).match('books').match('chapters')", function() {
     	var jdoc = new jDoc(library).match('books').match('chapters');
 		
 		equal(jdoc.any(), true, 'any');
 		equal(jdoc.count(), 6, 'count');
     });
     
-    test('', function() {
-    	var jdoc = new jDoc(library).match('chapters', true);
+    test("new jDoc(library).deepMatch('chapters')", function() {
+    	var jdoc = new jDoc(library).deepMatch('chapters');
 		
 		equal(jdoc.any(), true, 'any');
 		equal(jdoc.count(), 6, 'count');
     });
     
-    test('', function() {
+    test("new jDoc(library).match('chapters')", function() {
+    	var jdoc = new jDoc(library).match('chapters');
+		
+		equal(jdoc.any(), false, 'any');
+		equal(jdoc.count(), 0, 'count');
+    });
+    
+    test("new jDoc(library).match(/books/).match(/chapters/)", function() {
     	var jdoc = new jDoc(library).match(/books/).match(/chapters/);
 		
 		equal(jdoc.any(), true, 'any');
 		equal(jdoc.count(), 6, 'count');
     });
     
-    test('', function() {
+    test("new jDoc(library).match('does-not-exist')", function() {
     	var jdoc = new jDoc(library).match('does-not-exist');
 		
 		equal(jdoc.any(), false, 'any');
