@@ -45,29 +45,21 @@
          * Property: _index
          *   Index of currently selected object.
          *
-         * Property: _parent
-         *   Parent jDoc object, null if root.
-         *
          * Property: json
          *   Current object to operate on
          */
         // check if simple or compound constructor was passed in
-        if (arguments.length === 3) {
+        if (arguments.length === 2) {
             var list = arguments[0];
             var index = arguments[1];
-            var parent = arguments[2];
             
             this._list = list;
             this._index = index;
-            this._parent = parent;
-            this.json = (index >= 0 && index < list.length) ? list[index] : null;
         } else {
         
             // simple assignment
             this._list = (json !== null) ? [json] : [];
             this._index = 0;
-            this._parent = null;
-            this.json = json;
         }
     };
     
@@ -85,7 +77,8 @@
     };
     
     var _match = function(jdoc, condition, recurse, result) {
-        jdoc.each(function(json) {
+        jdoc.each(function(jdoc) {
+            var json = jdoc.json();
             for (var key in json) {
                 var value = json[key];
                 
@@ -103,9 +96,9 @@
                         // only recurse into objects
                         if (typeof value === 'object') {
                             if (typeof value.length === 'number') {
-                            	_match(new jDoc(value, 0, null), condition, recurse, result);
+                                _match(new jDoc(value, 0), condition, recurse, result);
                             } else {
-                            	_match(new jDoc(value), condition, recurse, result);
+                                _match(new jDoc(value), condition, recurse, result);
                             }
                         }
                     }
@@ -113,8 +106,8 @@
             }
         });
     };
-	
-	var _makePatternCheck = function(pattern) {
+    
+    var _makePatternCheck = function(pattern) {
         if (typeof pattern === 'function') {
             return pattern;
         } else if (pattern instanceof RegExp) {
@@ -126,7 +119,7 @@
                 return key === pattern;
             };
         }
-	};
+    };
     
     // public jDoc methods
     $.extend(jDoc.prototype, {
@@ -151,7 +144,7 @@
          *   jdoc - first jdoc object or an empty jdoc object
          */
         first: function() {
-            return new jDoc(this._list, 0, this._parent);
+            return new jDoc(this._list, 0);
         },
         
         /*
@@ -167,7 +160,7 @@
             }
             var nextIndex = this._index + 1;
             if (nextIndex < this._list.length) {
-                return new jDoc(this._list, nextIndex, this._parent);
+                return new jDoc(this._list, nextIndex);
             }
             return _empty;
         },
@@ -180,7 +173,7 @@
          *   context - context for function invocation
          */
         each: function(callback, context) {
-            for (var i = 0, value = this._list[0]; typeof value !== 'undefined' && callback.call(context, value) !== false; value = this._list[++i]) {
+            for (var i = 0, value = this._list[0]; typeof value !== 'undefined' && callback.call(context, new jDoc(value)) !== false; value = this._list[++i]) {
             }
         },
         
@@ -204,7 +197,7 @@
          */
         get: function(index) {
             if (index >= 0 && index < this._list.length) {
-                return new jDoc([this._list[index]], 0, this);
+                return new jDoc([this._list[index]], 0);
             }
             return _empty;
         },
@@ -220,49 +213,49 @@
          */
         where: function(condition, context) {
             var result = [];
-            this.each(function(json) {
-                if (condition.call(context, new jDoc(json))) {
-                    _push(result, json);
+            this.each(function(jdoc) {
+                if (condition.call(context, jdoc)) {
+                    _push(result, jdoc.json());
                 }
             });
-            return new jDoc(result, 0, this);
+            return new jDoc(result, 0);
         },
-		
-		/*
-		 * Method: union
-		 *   Returns union of two selections.
-		 * Parameters:
-		 *   jdoc - other selection
-		 * Return:
-		 *   jdoc - union of two selections
-		 */
-		union: function(jdoc) {
-			if(!this.any()) {
-				return jdoc;
-			}
-			if(!jdoc.any()) {
-				return this;
-			}
-			return new jDoc(this._list.concat(jdoc._list), 0, null);
-		},
-		
-		/*
-		 * Method: select
-		 *   Returns the array of objects produced by the callback function when 
-		 *   applied to each object in the selection.
-		 * Parameters:
+        
+        /*
+         * Method: union
+         *   Returns union of two selections.
+         * Parameters:
+         *   jdoc - other selection
+         * Return:
+         *   jdoc - union of two selections
+         */
+        union: function(jdoc) {
+            if (!this.any()) {
+                return jdoc;
+            }
+            if (!jdoc.any()) {
+                return this;
+            }
+            return new jDoc(this._list.concat(jdoc._list), 0);
+        },
+        
+        /*
+         * Method: select
+         *   Returns the array of objects produced by the callback function when
+         *   applied to each object in the selection.
+         * Parameters:
          *   callback - function to invoke for each object
          *   context - context for function invocation
          * Return:
          *   array - the array of objects produced by the callback function
-		 */
-		select: function(callback, context) {
-			var result = [];
-			this.each(function(json) {
-				result.push(callback.call(context, json));
-			});
-			return result;
-		},
+         */
+        select: function(callback, context) {
+            var result = [];
+            this.each(function(jdoc) {
+                result.push(callback.call(context, jdoc));
+            });
+            return result;
+        },
         
         //--- Item Methods ---
         
@@ -277,23 +270,16 @@
         },
         
         /*
-         * Method: parent
-         *   Returns the parent jdoc object or an empty jdoc object if its the root node
+         * Method: json
+         *   Returns currently selected value.
          * Return:
-         *   jdoc - parent jdoc object or an empty jdoc object if its the root node
+         *   object - currently selected value
          */
-        parent: function() {
-            return (this._parent !== null) ? this._parent : _empty;
-        },
-        
-        /*
-         * Method: root
-         *   Returns the top level, root jdoc object.
-         * Return:
-         *   jdoc - top level, root jdoc object.
-         */
-        root: function() {
-            return (this._parent !== null) ? this._parent.root() : this;
+        json: function() {
+            if (!this.hasValue()) {
+                throw new Exception("jDoc has no value");
+            }
+            return this._list[this._index];
         },
         
         /*
@@ -303,7 +289,7 @@
          *   string - text value of the current node
          */
         text: function() {
-            var json = this.json;
+            var json = this.json();
             while (json !== null) {
                 switch (typeof(json)) {
                 case 'boolean':
@@ -345,8 +331,8 @@
             
             // collect matching fields
             var result = [];
-			_match(this, _makePatternCheck(pattern), false, result);
-            return new jDoc(result, 0, this);
+            _match(this, _makePatternCheck(pattern), false, result);
+            return new jDoc(result, 0);
         },
         
         /*
@@ -366,8 +352,8 @@
             
             // collect matching fields
             var result = [];
-			_match(this, _makePatternCheck(pattern), true, result);
-            return new jDoc(result, 0, this);
+            _match(this, _makePatternCheck(pattern), true, result);
+            return new jDoc(result, 0);
         }
     });
 })();

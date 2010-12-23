@@ -121,7 +121,7 @@ $(function() {
         
         var result = [];
         for (var current = jdoc.first(); current.hasValue(); current = current.next()) {
-            result.push(current.json);
+            result.push(current.json());
         }
         
         deepEqual(result, ['Harry Potter', 'Brief History of time', 'Lord of the Rings']);
@@ -132,7 +132,7 @@ $(function() {
         
         var result = [];
         for (var index = 0; index < jdoc.count(); ++index) {
-            result.push(jdoc.get(index).json);
+            result.push(jdoc.get(index).json());
         }
         
         deepEqual(result, ['Harry Potter', 'Brief History of time', 'Lord of the Rings']);
@@ -142,8 +142,8 @@ $(function() {
         var jdoc = new jDoc(library).deepMatch('title');
         
         var result = [];
-        jdoc.each(function(json) {
-            result.push(json);
+        jdoc.each(function(jdoc) {
+            result.push(jdoc.json());
         });
         
         deepEqual(result, ['Harry Potter', 'Brief History of time', 'Lord of the Rings']);
@@ -155,8 +155,8 @@ $(function() {
         });
         
         var result = [];
-        jdoc.each(function(json) {
-            result.push(json);
+        jdoc.each(function(jdoc) {
+            result.push(jdoc.json());
         });
         
         deepEqual(result, ['Brief History of time', 'Lord of the Rings']);
@@ -168,16 +168,16 @@ $(function() {
         var union = titles.union(names);
         
         var result = [];
-        union.each(function(json) {
-            result.push(json);
+        union.each(function(jdoc) {
+            result.push(jdoc.json());
         });
         
         deepEqual(result, ['Harry Potter', 'Brief History of time', 'Lord of the Rings', 'My Library', 'Childrens', 'Science', 'Fiction']);
     });
     
     test("new jDoc(library).deepMatch('title').select(...)", function() {
-        var result = new jDoc(library).deepMatch('title').select(function(json) {
-            return json.length;
+        var result = new jDoc(library).deepMatch('title').select(function(jdoc) {
+            return jdoc.text().length;
         });
         
         deepEqual(result, [12, 21, 17]);

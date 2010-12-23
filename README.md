@@ -31,8 +31,7 @@ Item Methods
 * obj.hasValue()
 * obj.match(string | regexp | function)
 * obj.deepMatch(string | regexp | function)
-* obj.parent()
-* obj.root()
+* obj.json()
 * obj.text()
 
 Collection Methods
@@ -40,16 +39,18 @@ Collection Methods
 * obj.any()
 * obj.first()
 * obj.next()
-* obj.each(function(json), context)
+* obj.each(function(jdoc), context)
 * obj.get(index)
 * obj.count()
 * obj.where(function(jdoc))
 * obj.union(jdoc)
-* obj.select(function(json), context)
+* obj.select(function(jdoc), context)
 
 FUTURE
 ------
 * obj.$(selector)
+* obj.attributes()
+* obj.nodes()
 
 Compatibility
 -------------
