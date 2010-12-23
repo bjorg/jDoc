@@ -44,11 +44,12 @@ Collection Methods
 * obj.get(index)
 * obj.count()
 * obj.where(function(jdoc))
+* obj.union(jdoc)
+* obj.select(function(json), context)
 
 FUTURE
 ------
 * obj.$(selector)
-* obj.union(jdoc)
 
 Compatibility
 -------------

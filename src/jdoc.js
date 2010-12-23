@@ -185,6 +185,16 @@
         },
         
         /*
+         * Method: count
+         *   Returns the count of jdoc objects in the selection.
+         * Return:
+         *   number - number of jdoc object in the selection
+         */
+        count: function() {
+            return this._list.length;
+        },
+        
+        /*
          * Method: get
          *   Returns the jdoc object at the given position in the selection.
          * Parameters:
@@ -200,23 +210,13 @@
         },
         
         /*
-         * Method: count
-         *   Returns the count of jdoc objects in the selection.
-         * Return:
-         *   number - number of jdoc object in the selection
-         */
-        count: function() {
-            return this._list.length;
-        },
-        
-        /*
          * Method: where
-         *   Filters selection based on a condition callback.
+         *   Return filtered selection based on condition callback.
          * Parameters:
          *   condition - function to determine if jdoc object should be kept in selection
          *   context - context for function invocation
          * Return:
-         *   jdoc - filtered jdoc selection
+         *   jdoc - filtered selection based on condition callback
          */
         where: function(condition, context) {
             var result = [];
@@ -227,6 +227,42 @@
             });
             return new jDoc(result, 0, this);
         },
+		
+		/*
+		 * Method: union
+		 *   Returns union of two selections.
+		 * Parameters:
+		 *   jdoc - other selection
+		 * Return:
+		 *   jdoc - union of two selections
+		 */
+		union: function(jdoc) {
+			if(!this.any()) {
+				return jdoc;
+			}
+			if(!jdoc.any()) {
+				return this;
+			}
+			return new jDoc(this._list.concat(jdoc._list), 0, null);
+		},
+		
+		/*
+		 * Method: select
+		 *   Returns the array of objects produced by the callback function when 
+		 *   applied to each object in the selection.
+		 * Parameters:
+         *   callback - function to invoke for each object
+         *   context - context for function invocation
+         * Return:
+         *   array - the array of objects produced by the callback function
+		 */
+		select: function(callback, context) {
+			var result = [];
+			this.each(function(json) {
+				result.push(callback.call(context, json));
+			});
+			return result;
+		},
         
         //--- Item Methods ---
         
