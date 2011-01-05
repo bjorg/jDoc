@@ -256,7 +256,19 @@
             });
             return result;
         },
-        
+		
+		$: function(path) {
+			var parts = path.split('/');
+			for(var i = 0; i < parts.length; ++i) {
+				var part = parts[i];
+				if(part === '' && i === 0) {
+					
+					
+					continue;
+				}
+			}
+		},
+
         //--- Item Methods ---
         
         /*
