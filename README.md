@@ -33,6 +33,8 @@ Item Methods
 * obj.deepMatch(string | regexp | function)
 * obj.json()
 * obj.text()
+* obj.attributes()
+* obj.elements()
 
 Collection Methods
 ------------------
@@ -49,8 +51,7 @@ Collection Methods
 FUTURE
 ------
 * obj.$(selector)
-* obj.attributes()
-* obj.nodes()
+* obj.name()
 
 Compatibility
 -------------
@@ -60,5 +61,4 @@ Compatibility
 
 Update Log
 ----------
-0.1
-        Initial release
+* 0.1 - Initial release

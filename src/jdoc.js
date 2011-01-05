@@ -354,6 +354,26 @@
             var result = [];
             _match(this, _makePatternCheck(pattern), true, result);
             return new jDoc(result, 0);
-        }
+        },
+		
+		/*
+		 * Method: attributes
+		 *   Returns selection of all attributes on current object.
+		 * Return:
+		 *   selection of all attributes on current object
+		 */
+		attributes: function() {
+			return this.match(/^@.+$/);
+		},
+				
+		/*
+		 * Method: nodes
+		 *   Returns selection of all elements on current object.
+		 * Return:
+		 *   selection of all elements on current object
+		 */
+		elements: function() {
+			return this.match(/^[^@#].*$/);
+		}
     });
 })();

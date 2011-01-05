@@ -182,4 +182,19 @@ $(function() {
         
         deepEqual(result, [12, 21, 17]);
     });
+	
+	test("new jDoc(library).attributes()", function() {
+		var result = new jDoc(library).attributes();
+        
+		equal(result.any(), true, 'any');
+		equal(result.count(), 1, 'count');
+		equal(result.text(), '2007-17-7', 'text');
+	});
+	
+	test("new jDoc(library).elements()", function() {
+		var result = new jDoc(library).elements();
+        
+		equal(result.any(), true, 'any');
+		equal(result.count(), 8, 'count');
+	});
 });
