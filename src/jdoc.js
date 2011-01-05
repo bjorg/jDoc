@@ -63,6 +63,7 @@
         }
     };
     
+    // define empty jDoc instance
     var _empty = new jDoc(null);
     
     // private jDoc functions	
@@ -107,7 +108,7 @@
         });
     };
     
-    var _makePatternCheck = function(pattern) {
+    var _createPatternCheck = function(pattern) {
         if (typeof pattern === 'function') {
             return pattern;
         } else if (pattern instanceof RegExp) {
@@ -119,6 +120,71 @@
                 return key === pattern;
             };
         }
+    };
+    
+    var _compiledSelectors = {};
+    
+    var _createSelectorExpression = function(selector) {
+        if (typeof selector !== 'string' || selector === '') {
+            throw new Exception('invalid selector');
+        }
+        var parts = selector.split('/');
+        var deep = false;
+        var code = 'this';
+        for (var i = 0; i < parts.length; ++i) {
+            var part = parts[i];
+            switch (part) {
+            case '':
+                
+                // skip empty segment if it is the first entry
+                if (i === 0) {
+                    continue;
+                }
+                
+                // check if we have three consecutive slashes (i.e. ///)
+                if (deep) {
+                    throw new Exception('invalid selector');
+                }
+                deep = true;
+                continue;
+            case '.':
+                
+                // nothing to do
+                break;
+            case '..':
+                
+                throw new Exception('unsupported .. operation in selector')
+                break;
+            case '*':
+                if (deep) {
+                    code += '.deepMatch(/^[^@#].*$/)';
+                } else {
+                    code += '.match(/^[^@#].*$/)';
+                }
+                break;
+            case '@*':
+                if (deep) {
+                    code += '.deepMatch(/^@.+$/)';
+                } else {
+                    code += '.match(/^@.+$/)';
+                }
+                break;
+            default:
+                if (deep) {
+                    code += '.deepMatch("' + part.replace('"', '\\"') + '")';
+                } else {
+                    code += '.match("' + part.replace('"', '\\"') + '")';
+                }
+                break;
+            }
+            deep = false;
+        }
+        
+        // check if we have a trailing slash (e.g. foo/)
+        if (deep) {
+            throw new Exception('invalid selector');
+        }
+        return code;
     };
     
     // public jDoc methods
@@ -256,19 +322,7 @@
             });
             return result;
         },
-		
-		$: function(path) {
-			var parts = path.split('/');
-			for(var i = 0; i < parts.length; ++i) {
-				var part = parts[i];
-				if(part === '' && i === 0) {
-					
-					
-					continue;
-				}
-			}
-		},
-
+        
         //--- Item Methods ---
         
         /*
@@ -343,7 +397,7 @@
             
             // collect matching fields
             var result = [];
-            _match(this, _makePatternCheck(pattern), false, result);
+            _match(this, _createPatternCheck(pattern), false, result);
             return new jDoc(result, 0);
         },
         
@@ -364,28 +418,44 @@
             
             // collect matching fields
             var result = [];
-            _match(this, _makePatternCheck(pattern), true, result);
+            _match(this, _createPatternCheck(pattern), true, result);
             return new jDoc(result, 0);
         },
-		
-		/*
-		 * Method: attributes
-		 *   Returns selection of all attributes on current object.
-		 * Return:
-		 *   selection of all attributes on current object
-		 */
-		attributes: function() {
-			return this.match(/^@.+$/);
-		},
+        
+        /*
+         * Method: attributes
+         *   Returns selection of all attributes on current object.
+         * Return:
+         *   selection of all attributes on current object
+         */
+        attributes: function() {
+            return this.match(/^@.+$/);
+        },
+        
+        /*
+         * Method: nodes
+         *   Returns selection of all elements on current object.
+         * Return:
+         *   selection of all elements on current object
+         */
+        elements: function() {
+            return this.match(/^[^@#].*$/);
+        },
+        
+        /*
+         * Method: $
+         *   Returns a selection of matching properties based on the selector.
+         * Return:
+         *    selection of matching properties based on the selector expression
+         */
+        $: function(selector) {
+            var code;
+            if (typeof(code = _compiledSelectors[selector]) === 'undefined') {
 				
-		/*
-		 * Method: nodes
-		 *   Returns selection of all elements on current object.
-		 * Return:
-		 *   selection of all elements on current object
-		 */
-		elements: function() {
-			return this.match(/^[^@#].*$/);
-		}
+				// compile new selection function
+                _compiledSelectors[selector] = code = new Function('return ' + _createSelectorExpression(selector));
+			}
+            return code.call(this);
+        }
     });
 })();

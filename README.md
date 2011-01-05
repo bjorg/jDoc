@@ -29,6 +29,7 @@ Usage
 Item Methods
 ------------
 * obj.hasValue()
+* obj.$(selector)
 * obj.match(string | regexp | function)
 * obj.deepMatch(string | regexp | function)
 * obj.json()
@@ -47,11 +48,6 @@ Collection Methods
 * obj.where(function(jdoc))
 * obj.union(jdoc)
 * obj.select(function(jdoc), context)
-
-FUTURE
-------
-* obj.$(selector)
-* obj.name()
 
 Compatibility
 -------------

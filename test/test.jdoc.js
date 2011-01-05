@@ -42,15 +42,6 @@ $(function() {
         }]
     };
     
-    var testCompile = function(path, expected) {
-        test(path, function() {
-            var value = jPath.compile(path, true).toString();
-            value = value.replace('function anonymous(', 'function(');
-            
-            equal(value, expected);
-        });
-    };
-    
     test("new jDoc(library)", function() {
         var jdoc = new jDoc(library);
         
@@ -196,5 +187,109 @@ $(function() {
         
 		equal(result.any(), true, 'any');
 		equal(result.count(), 8, 'count');
+	});
+	
+	test("new jDoc(library).$('.')", function() {
+        var jdoc = new jDoc(library).$('.');
+        
+        equal(jdoc.any(), true, 'any');
+        equal(jdoc.count(), 1, 'count');
+	});
+	
+    test("new jDoc(library).$('name')", function() {
+        var jdoc = new jDoc(library).$('name');
+        
+        equal(jdoc.any(), true, 'any');
+        equal(jdoc.count(), 1, 'count');
+        equal(jdoc.text(), 'My Library', 'text')
+    });
+	
+    test("new jDoc(library).$('/name')", function() {
+        var jdoc = new jDoc(library).$('/name');
+        
+        equal(jdoc.any(), true, 'any');
+        equal(jdoc.count(), 1, 'count');
+        equal(jdoc.text(), 'My Library', 'text')
+    });
+    
+    test("new jDoc(library).$('address/street')", function() {
+        var jdoc = new jDoc(library).$('address/street');
+        
+        equal(jdoc.any(), true, 'any');
+        equal(jdoc.count(), 1, 'count');
+        equal(jdoc.text(), 'Mockingbird Lane', 'text')
+    });
+    
+    test("new jDoc(library).$('books')", function() {
+        var jdoc = new jDoc(library).$('books');
+        
+        equal(jdoc.any(), true, 'any');
+        equal(jdoc.count(), 3, 'count');
+    });
+    
+    test("new jDoc(library).$('books/chapters')", function() {
+        var jdoc = new jDoc(library).$('books/chapters');
+        
+        equal(jdoc.any(), true, 'any');
+        equal(jdoc.count(), 6, 'count');
+    });
+    
+    test("new jDoc(library).$('//chapters')", function() {
+        var jdoc = new jDoc(library).$('//chapters');
+        
+        equal(jdoc.any(), true, 'any');
+        equal(jdoc.count(), 6, 'count');
+    });
+    
+    test("new jDoc(library).$('chapters')", function() {
+        var jdoc = new jDoc(library).$('chapters');
+        
+        equal(jdoc.any(), false, 'any');
+        equal(jdoc.count(), 0, 'count');
+    });
+    
+    test("new jDoc(library).$('does-not-exist')", function() {
+        var jdoc = new jDoc(library).$('does-not-exist');
+        
+        equal(jdoc.any(), false, 'any');
+        equal(jdoc.count(), 0, 'count');
+    });
+	
+	test("new jDoc(library).$('@*')", function() {
+		var result = new jDoc(library).$('@*');
+        
+		equal(result.any(), true, 'any');
+		equal(result.count(), 1, 'count');
+		equal(result.text(), '2007-17-7', 'text');
+	});
+	
+	test("new jDoc(library).$('//@*')", function() {
+		var result = new jDoc(library).$('//@*');
+        
+		equal(result.any(), true, 'any');
+		equal(result.count(), 2, 'count');
+		equal(result.text(), '2007-17-7', 'text');
+		equal(result.next().text(), 'true', 'next.text');
+	});
+	
+	test("new jDoc(library).$('*')", function() {
+		var result = new jDoc(library).$('*');
+        
+		equal(result.any(), true, 'any');
+		equal(result.count(), 8, 'count');
+	});
+	
+	test("new jDoc(library).$('//*')", function() {
+		var result = new jDoc(library).$('//*');
+        
+		equal(result.any(), true, 'any');
+		equal(result.count(), 72, 'count');
+	});
+	
+	test("new jDoc(library).$('//*') cached", function() {
+		var result = new jDoc(library).$('//*');
+        
+		equal(result.any(), true, 'any');
+		equal(result.count(), 72, 'count');
 	});
 });
