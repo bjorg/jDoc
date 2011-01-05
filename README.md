@@ -19,8 +19,10 @@ be refined by filtering and then iterated over.
 Usage
 -----
 	var jdoc = new jDoc(json);
+	
 	// select all title nodes inside of all book nodes
 	var title = jdoc.match('book').match('title');
+	
 	// obtain the text of all matched titles
 	for (; title.hasValue(); title = title.next()) {  
  		var text = somevalue.text();
