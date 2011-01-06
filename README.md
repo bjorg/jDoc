@@ -16,17 +16,22 @@ Using jDoc
 jDoc uses a fluid interface to query for nested objects in a JSON document.  Selections can
 be refined by filtering and then iterated over.
 
-Usage
------
+Example 1: Getting the text value of the first selected node
+------------------------------------------------------------
 	var jdoc = new jDoc(json);
 	
-	// select all title nodes inside of all book nodes
-	var title = jdoc.match('book').match('title');
+	// obtain the text of the first title node inside a book node
+	var result = jdoc.text('book/title');
+
+Example 2: Finding the text value of all selected nodes
+-------------------------------------------------------
+	var jdoc = new jDoc(json);
 	
-	// obtain the text of all matched titles
-	for (; title.hasValue(); title = title.next()) {  
- 		var text = somevalue.text();
-	}
+	// obtain the text of all title nodes inside of all book nodes
+	var result = '';
+	jdoc.$('book/title').each(function(cur) {
+		result += 'title: '  + cur.text() + '\n';
+	});
 
 Item Methods
 ------------
@@ -34,8 +39,8 @@ Item Methods
 * obj.$(selector)
 * obj.match(string | regexp | function)
 * obj.deepMatch(string | regexp | function)
-* obj.json()
-* obj.text()
+* obj.json() -or- obj.json(selector)
+* obj.text() -or- obj.text(selector)
 * obj.attributes()
 * obj.elements()
 

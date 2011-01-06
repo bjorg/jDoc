@@ -57,6 +57,10 @@ $(function() {
         equal(jdoc.text(), 'My Library', 'text')
     });
     
+    test("new jDoc(library).text('name')", function() {
+        equal(new jDoc(library).text('name'), 'My Library', 'text')
+    });
+    
     test("new jDoc(library).match('address').match('street')", function() {
         var jdoc = new jDoc(library).match('address').match('street');
         

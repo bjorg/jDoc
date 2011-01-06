@@ -337,25 +337,35 @@
         
         /*
          * Method: json
-         *   Returns currently selected value.
+         *   Returns current or selected value.
+         * Parameters:
+         *   selector - (undefined) get value of current node
+         *              (string) get value of first node found by the selector
          * Return:
-         *   object - currently selected value
+         *   object - current or selected value
          */
-        json: function() {
-            if (!this.hasValue()) {
+        json: function(selector) {
+            var node = this;
+            if (typeof selector === 'string') {
+                node = this.$(selector);
+            }
+            if (!node.hasValue()) {
                 throw new Exception("jDoc has no value");
             }
-            return this._list[this._index];
+            return node._list[this._index];
         },
         
         /*
          * Method: text
-         *   Returns the text value of the current node
+         *   Returns the text value of the current or selected node
+         * Parameters:
+         *   selector - (undefined) get text of current node
+         *              (string) get text of first node found by the selector
          * Return:
-         *   string - text value of the current node
+         *   string - text value of the current or selected node
          */
-        text: function() {
-            var json = this.json();
+        text: function(selector) {
+            var json = this.json(selector);
             while (json !== null) {
                 switch (typeof(json)) {
                 case 'boolean':
@@ -451,10 +461,10 @@
         $: function(selector) {
             var code;
             if (typeof(code = _compiledSelectors[selector]) === 'undefined') {
-				
-				// compile new selection function
+            
+                // compile new selection function
                 _compiledSelectors[selector] = code = new Function('return ' + _createSelectorExpression(selector));
-			}
+            }
             return code.call(this);
         }
     });
