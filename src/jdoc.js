@@ -1,6 +1,6 @@
 /*
- * jDoc 1.0 - json document
- * Copyright (C) 2010  Steve Bjorg <steveb at mindtouch dot com>
+ * jDoc 0.1 - json document
+ * Copyright (C) 2010, 2011  Steve Bjorg <steveb at mindtouch dot com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,6 @@
      * -OR-
      *   nodes - list of selected nodes
      *   index - index of selected node
-     *   parent - parent jDoc object
      * Returns:
      *   object - jDoc wrapper
      */
@@ -50,12 +49,17 @@
          */
         // check if simple or compound constructor was passed in
         if (arguments.length === 2) {
+			if(!(this instanceof jDoc)) {
+				return new jDoc(arguments[0], arguments[1]);
+			}		
             var list = arguments[0];
             var index = arguments[1];
-            
             this._list = list;
             this._index = index;
         } else {
+			if(!(this instanceof jDoc)) {
+				return new jDoc(json);
+			}		
         
             // simple assignment
             this._list = (json !== null) ? [json] : [];

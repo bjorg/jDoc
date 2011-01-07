@@ -21,6 +21,9 @@ Example 1: Getting the text value of the first selected node
 	var jdoc = new jDoc(json);
 	
 	// obtain the text of the first title node inside a book node
+	var result = jdoc.$('book/title').text();
+	
+	// or you can use the shorthand form
 	var result = jdoc.text('book/title');
 
 Example 2: Finding the text value of all selected nodes
@@ -33,28 +36,31 @@ Example 2: Finding the text value of all selected nodes
 		result += 'title: '  + cur.text() + '\n';
 	});
 
-Item Methods
-------------
-* obj.hasValue()
+Selection Methods
+-----------------
 * obj.$(selector)
 * obj.match(string | regexp | function)
 * obj.deepMatch(string | regexp | function)
-* obj.json() -or- obj.json(selector)
-* obj.text() -or- obj.text(selector)
 * obj.attributes()
 * obj.elements()
+
+Item Methods
+------------
+* obj.hasValue()
+* obj.json([selector])
+* obj.text([selector])
 
 Collection Methods
 ------------------
 * obj.any()
 * obj.first()
 * obj.next()
-* obj.each(function(jdoc), context)
+* obj.each(function(jdoc) [, context])
 * obj.get(index)
 * obj.count()
-* obj.where(function(jdoc))
+* obj.where(function(jdoc) [, context])
 * obj.union(jdoc)
-* obj.select(function(jdoc), context)
+* obj.select(function(jdoc) [, context])
 
 Compatibility
 -------------
