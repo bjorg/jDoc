@@ -1,5 +1,5 @@
 /*
- * jDoc 0.1 - json document
+ * jDoc 0.2 - json document
  * Copyright (C) 2010, 2011  Steve Bjorg <steveb at mindtouch dot com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -338,12 +338,19 @@
     
     /*
      * Method: hasValue
-     *   Returns true if an object is selected
+     *   Returns true if an object is selected.
+     * Parameters:
+     *   selector - (undefined) check current node
+     *              (string) check node found by the selector
      * Return:
      *   boolean - true if an object is selected
      */
-    jDoc.prototype.hasValue = function() {
-        return this._index < this._list.length;
+    jDoc.prototype.hasValue = function(selector) {
+        var node = this;
+        if (typeof selector === 'string') {
+            node = this.at(selector);
+        }
+        return node._index < node._list.length;
     };
     
     /*
@@ -358,7 +365,7 @@
     jDoc.prototype.json = function(selector) {
         var node = this;
         if (typeof selector === 'string') {
-            node = this.$(selector);
+            node = this.at(selector);
         }
         if (!node.hasValue()) {
             return null;
@@ -464,12 +471,12 @@
     };
     
     /*
-     * Method: $
+     * Method: at (fomerly: $)
      *   Returns a selection of matching properties based on the selector.
      * Return:
      *    selection of matching properties based on the selector expression
      */
-    jDoc.prototype.$ = function(selector) {
+    jDoc.prototype.$ = jDoc.prototype.at = function(selector) {
         var code;
         if (typeof(code = _compiledSelectors[selector]) === 'undefined') {
         
