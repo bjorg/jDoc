@@ -83,6 +83,14 @@ $(function() {
         equal(jDoc(library).text('name'), 'My Library', 'text')
     });
     
+    test("json('not-found')", function() {
+        equal(jDoc(library).json('not-found'), null, 'json')
+    });
+    
+    test("text('not-found')", function() {
+        equal(jDoc(library).text('not-found'), null, 'text')
+    });
+    
     test("match('address').match('street')", function() {
         var jdoc = jDoc(library).match('address').match('street');
         
