@@ -67,6 +67,9 @@
             this._index = 0;
         }
     };
+
+	// Current version.
+	jDoc.VERSION = '0.2.0';
     
     // Export the jDoc object for **CommonJS**, with backwards-compatibility
     // for the old `require()` API. If we're not in CommonJS, add `_` to the
