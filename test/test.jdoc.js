@@ -223,82 +223,82 @@ $(function() {
 		equal(result.count(), 8, 'count');
 	});
 	
-	test("$('.')", function() {
-        var jdoc = jDoc(library).$('.');
+	test("at('.')", function() {
+        var jdoc = jDoc(library).at('.');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 1, 'count');
 	});
 	
-    test("$('name')", function() {
-        var jdoc = jDoc(library).$('name');
+    test("at('name')", function() {
+        var jdoc = jDoc(library).at('name');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 1, 'count');
         equal(jdoc.text(), 'My Library', 'text')
     });
 	
-    test("$('/name')", function() {
-        var jdoc = jDoc(library).$('/name');
+    test("at('/name')", function() {
+        var jdoc = jDoc(library).at('/name');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 1, 'count');
         equal(jdoc.text(), 'My Library', 'text')
     });
     
-    test("$('address/street')", function() {
-        var jdoc = jDoc(library).$('address/street');
+    test("at('address/street')", function() {
+        var jdoc = jDoc(library).at('address/street');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 1, 'count');
         equal(jdoc.text(), 'Mockingbird Lane', 'text')
     });
     
-    test("$('books')", function() {
-        var jdoc = jDoc(library).$('books');
+    test("at('books')", function() {
+        var jdoc = jDoc(library).at('books');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 3, 'count');
     });
     
-    test("$('books/chapters')", function() {
-        var jdoc = jDoc(library).$('books/chapters');
+    test("at('books/chapters')", function() {
+        var jdoc = jDoc(library).at('books/chapters');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 6, 'count');
     });
     
-    test("$('//chapters')", function() {
-        var jdoc = jDoc(library).$('//chapters');
+    test("at('//chapters')", function() {
+        var jdoc = jDoc(library).at('//chapters');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 6, 'count');
     });
     
-    test("$('chapters')", function() {
-        var jdoc = jDoc(library).$('chapters');
+    test("at('chapters')", function() {
+        var jdoc = jDoc(library).at('chapters');
         
         equal(jdoc.any(), false, 'any');
         equal(jdoc.count(), 0, 'count');
     });
     
-    test("$('does-not-exist')", function() {
-        var jdoc = jDoc(library).$('does-not-exist');
+    test("at('does-not-exist')", function() {
+        var jdoc = jDoc(library).at('does-not-exist');
         
         equal(jdoc.any(), false, 'any');
         equal(jdoc.count(), 0, 'count');
     });
 	
-	test("$('@*')", function() {
-		var result = jDoc(library).$('@*');
+	test("at('@*')", function() {
+		var result = jDoc(library).at('@*');
         
 		equal(result.any(), true, 'any');
 		equal(result.count(), 1, 'count');
 		equal(result.text(), '2007-17-7', 'text');
 	});
 	
-	test("$('//@*')", function() {
-		var result = jDoc(library).$('//@*');
+	test("at('//@*')", function() {
+		var result = jDoc(library).at('//@*');
         
 		equal(result.any(), true, 'any');
 		equal(result.count(), 2, 'count');
@@ -306,22 +306,22 @@ $(function() {
 		equal(result.next().text(), 'true', 'next.text');
 	});
 	
-	test("$('*')", function() {
-		var result = jDoc(library).$('*');
+	test("at('*')", function() {
+		var result = jDoc(library).at('*');
         
 		equal(result.any(), true, 'any');
 		equal(result.count(), 8, 'count');
 	});
 	
-	test("$('//*')", function() {
-		var result = jDoc(library).$('//*');
+	test("at('//*')", function() {
+		var result = jDoc(library).at('//*');
         
 		equal(result.any(), true, 'any');
 		equal(result.count(), 72, 'count');
 	});
 	
-	test("$('//*') cached", function() {
-		var result = jDoc(library).$('//*');
+	test("at('//*') cached", function() {
+		var result = jDoc(library).at('//*');
         
 		equal(result.any(), true, 'any');
 		equal(result.count(), 72, 'count');
