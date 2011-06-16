@@ -1,5 +1,5 @@
-jDoc
-====
+jDoc (v0.2)
+===========
 *Turn JSON objects into queryable documents*
 
 jDoc is a lightweight Javascript class which provides querying capabilities over JSON objects.
