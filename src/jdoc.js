@@ -1,5 +1,5 @@
 /*
- * jDoc 0.2 - json document
+ * jDoc 0.2 - Turn JSON objects into queryable documents
  * Copyright (C) 2010, 2011  Steve Bjorg <steveb at mindtouch dot com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,19 +34,19 @@
      *   nodes - list of selected nodes
      *   index - index of selected node
      * Returns:
-     *   object - jDoc wrapper
+     *   jDoc - jDoc wrapper
      */
     var jDoc = function(json) {
     
         /*
          * Property: _list
-         *   List of selected object.
+         *   List of selected values.
          *
          * Property: _index
-         *   Index of currently selected object.
+         *   Index of currently selected value.
          *
          * Property: json
-         *   Current object to operate on
+         *   Current value to operate on
          */
         // check if simple or compound constructor was passed in
         if (arguments.length === 2) {
@@ -97,7 +97,7 @@
     
     var _match = function(jdoc, condition, recurse, result) {
         jdoc.each(function(jdoc) {
-            var json = jdoc.json();
+            var json = jdoc.value();
             var key;
             for (key in json) {
                 var value = json[key];
@@ -176,21 +176,21 @@
                 throw new Error('unsupported .. operation in selector');
             case '*':
                 if (deep) {
-                    code += '.deepMatch(/^[^@#].*$/)';
+                    code += '.match(/^[^@#].*$/, true)';
                 } else {
                     code += '.match(/^[^@#].*$/)';
                 }
                 break;
             case '@*':
                 if (deep) {
-                    code += '.deepMatch(/^@.+$/)';
+                    code += '.match(/^@.+$/, true)';
                 } else {
                     code += '.match(/^@.+$/)';
                 }
                 break;
             default:
                 if (deep) {
-                    code += '.deepMatch("' + part.replace('"', '\\"') + '")';
+                    code += '.match("' + part.replace('"', '\\"') + '", true)';
                 } else {
                     code += '.match("' + part.replace('"', '\\"') + '")';
                 }
@@ -210,9 +210,9 @@
     
     /*
      * Method: any
-     *   Returns true if the jdoc object has a non-empty selection
+     *   Returns true if the jDoc object has a non-empty selection
      * Return:
-     *   boolean - true if the jdoc object has a non-empty selection
+     *   boolean - true if the jDoc object has a non-empty selection
      */
     jDoc.prototype.any = function() {
         return this._list.length > 0;
@@ -220,10 +220,10 @@
     
     /*
      * Method: first
-     *   Returns the first jdoc object in the selection or an empty jdoc object
+     *   Returns the first jDoc object in the selection or an empty jDoc object
      *   if the selection is empty
      * Return:
-     *   jdoc - first jdoc object or an empty jdoc object
+     *   jDoc - first jDoc object or an empty jDoc object
      */
     jDoc.prototype.first = function() {
         return new jDoc(this._list, 0);
@@ -231,13 +231,13 @@
     
     /*
      * Method: next
-     *   Returns the next jdoc object in the selection or an empty jdoc object
+     *   Returns the next jDoc object in the selection or an empty jDoc object
      *   if no more items are available
      * Return:
-     *   jdoc - next jdoc object or an empty jdoc object
+     *   jDoc - next jDoc object or an empty jDoc object
      */
     jDoc.prototype.next = function() {
-        if (!this.hasValue()) {
+        if (!this.exists()) {
             return this;
         }
         var nextIndex = this._index + 1;
@@ -249,9 +249,9 @@
     
     /*
      * Method: each
-     *   Iterates over all objects in the selection.
+     *   Iterates over all jDoc objects in the selection.
      * Parameters:
-     *   callback - function to invoke on each object (return false to abort iteration)
+     *   callback - function to invoke on each jDoc object (return false to abort iteration)
      *   context - context for function invocation
      */
     jDoc.prototype.each = function(callback, context) {
@@ -264,9 +264,9 @@
     
     /*
      * Method: count
-     *   Returns the count of jdoc objects in the selection.
+     *   Returns the count of jDoc objects in the selection.
      * Return:
-     *   number - number of jdoc object in the selection
+     *   number - number of jDoc object in the selection
      */
     jDoc.prototype.count = function() {
         return this._list.length;
@@ -274,11 +274,11 @@
     
     /*
      * Method: get
-     *   Returns the jdoc object at the given position in the selection.
+     *   Returns the jDoc object at the given position in the selection.
      * Parameters:
-     *   index - index of jdoc object to return from selection
+     *   index - index of jDoc object to return from selection
      * Return:
-     *   jdoc - jdoc object at index or an empty jdoc object
+     *   jDoc - jDoc object at index or an empty jDoc object
      */
     jDoc.prototype.get = function(index) {
         if (index >= 0 && index < this._list.length) {
@@ -291,16 +291,16 @@
      * Method: where
      *   Return filtered selection based on condition callback.
      * Parameters:
-     *   condition - function to determine if jdoc object should be kept in selection
+     *   condition - function to determine if jDoc object should be kept in selection
      *   context - context for function invocation
      * Return:
-     *   jdoc - filtered selection based on condition callback
+     *   jDoc - filtered selection based on condition callback
      */
     jDoc.prototype.where = function(condition, context) {
         var result = [];
         this.each(function(jdoc) {
             if (condition.call(context, jdoc)) {
-                _push(result, jdoc.json());
+                _push(result, jdoc.value());
             }
         });
         return new jDoc(result, 0);
@@ -310,9 +310,9 @@
      * Method: union
      *   Returns union of two selections.
      * Parameters:
-     *   jdoc - other selection
+     *   jDoc - other selection
      * Return:
-     *   jdoc - union of two selections
+     *   jDoc - union of two selections
      */
     jDoc.prototype.union = function(jdoc) {
         if (!this.any()) {
@@ -326,15 +326,15 @@
     
     /*
      * Method: select
-     *   Returns the array of objects produced by the callback function when
-     *   applied to each object in the selection.
+     *   Returns the array of values produced by the callback function when
+     *   applied to each jDoc object in the selection.
      * Parameters:
      *   callback - function to invoke for each object
      *   context - context for function invocation
      * Return:
-     *   array - the array of objects produced by the callback function
+     *   array - the array of values produced by the callback function
      */
-    jDoc.prototype.select = function(callback, context) {
+    jDoc.prototype.map = function(callback, context) {
         var result = [];
         this.each(function(jdoc) {
             result.push(callback.call(context, jdoc));
@@ -345,37 +345,37 @@
     //--- Item Methods ---
     
     /*
-     * Method: hasValue
-     *   Returns true if an object is selected.
+     * Method: exists
+     *   Returns true if a value is selected.
      * Parameters:
      *   selector - (undefined) check current node
      *              (string) check node found by the selector
      * Return:
-     *   boolean - true if an object is selected
+     *   boolean - true if a value is selected
      */
-    jDoc.prototype.hasValue = function(selector) {
+    jDoc.prototype.exists = jDoc.prototype.hasValue = function(selector) {
         var node = this;
         if (typeof selector === 'string') {
-            node = this.at(selector);
+            node = this.select(selector);
         }
         return node._index < node._list.length;
     };
     
     /*
-     * Method: json
+     * Method: value
      *   Returns current or selected value.
      * Parameters:
      *   selector - (undefined) get value of current node
      *              (string) get value of first node found by the selector
      * Return:
-     *   object - current or selected value
+     *   any - current or selected value
      */
-    jDoc.prototype.json = function(selector) {
+    jDoc.prototype.value = function(selector) {
         var node = this;
         if (typeof selector === 'string') {
-            node = this.at(selector);
+            node = this.select(selector);
         }
-        if (!node.hasValue()) {
+        if (!node.exists()) {
             return null;
         }
         return node._list[this._index];
@@ -391,7 +391,7 @@
      *   string - text value of the current or selected node
      */
     jDoc.prototype.text = function(selector) {
-        var json = this.json(selector);
+        var json = this.value(selector);
         while (json !== null) {
             switch (typeof(json)) {
             case 'boolean':
@@ -418,51 +418,31 @@
     
     /*
      * Method: match
-     *    Returns selection of all matching properties in current jdoc selection.
+     *    Returns selection of all matching properties in current jDoc selection.
      * Parameters:
      *    pattern - (string) literal string used to match on property names
      *              (regexp) regular expression used to match on property names
      *              (function) function invoked with property name to determine the match
+     *    recursive - match properties at any nesting level in current jDoc selection
      * Return:
-     *    jdoc - selection of all matching properties in current jdoc selection
+     *    jDoc - selection of all matching properties
      */
-    jDoc.prototype.match = function(pattern) {
-        if (!this.hasValue()) {
+    jDoc.prototype.match = function(pattern, recursive) {
+        if (!this.exists()) {
             return this;
         }
         
         // collect matching fields
         var result = [];
-        _match(this, _createPatternCheck(pattern), false, result);
-        return new jDoc(result, 0);
-    };
-    
-    /*
-     * Method: deepMatch
-     *    Returns selection of all matching properties at any nesting level in current jdoc selection.
-     * Parameters:
-     *    pattern - (string) literal string used to match on property names
-     *              (regexp) regular expression used to match on property names
-     *              (function) function invoked with property name to determine the match
-     * Return:
-     *    jdoc - selection of all matching properties at any nesting level in current jdoc selection
-     */
-    jDoc.prototype.deepMatch = function(pattern) {
-        if (!this.hasValue()) {
-            return this;
-        }
-        
-        // collect matching fields
-        var result = [];
-        _match(this, _createPatternCheck(pattern), true, result);
+        _match(this, _createPatternCheck(pattern), recursive || false, result);
         return new jDoc(result, 0);
     };
     
     /*
      * Method: attributes
-     *   Returns selection of all attributes on current object.
+     *   Returns selection of all attributes on current jDoc object.
      * Return:
-     *   selection of all attributes on current object
+     *   selection of all attributes on current jDoc object
      */
     jDoc.prototype.attributes = function() {
         return this.match(/^@.+$/);
@@ -470,21 +450,21 @@
     
     /*
      * Method: nodes
-     *   Returns selection of all elements on current object.
+     *   Returns selection of all elements on current jDoc object.
      * Return:
-     *   selection of all elements on current object
+     *   selection of all elements on current jDoc object
      */
     jDoc.prototype.elements = function() {
         return this.match(/^[^@#].*$/);
     };
     
     /*
-     * Method: at (fomerly: $)
+     * Method: select
      *   Returns a selection of matching properties based on the selector.
      * Return:
-     *    selection of matching properties based on the selector expression
+     *   jDoc - selection of matched values
      */
-    jDoc.prototype.$ = jDoc.prototype.at = function(selector) {
+    jDoc.prototype.select = function(selector) {
         var code;
         if (typeof(code = _compiledSelectors[selector]) === 'undefined') {
         

@@ -1,5 +1,5 @@
 /*
- * jDoc 0.1 - json document
+ * jDoc 0.2 - Turn JSON objects into queryable documents
  * Copyright (C) 2010, 2011  Steve Bjorg <steveb at mindtouch dot com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -83,8 +83,8 @@ $(function() {
         equal(jDoc(library).text('name'), 'My Library', 'text')
     });
     
-    test("json('not-found')", function() {
-        equal(jDoc(library).json('not-found'), null, 'json')
+    test("value('not-found')", function() {
+        equal(jDoc(library).value('not-found'), null, 'json')
     });
     
     test("text('not-found')", function() {
@@ -113,8 +113,8 @@ $(function() {
         equal(jdoc.count(), 6, 'count');
     });
     
-    test("deepMatch('chapters')", function() {
-        var jdoc = jDoc(library).deepMatch('chapters');
+    test("match('chapters', true)", function() {
+        var jdoc = jDoc(library).match('chapters', true);
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 6, 'count');
@@ -142,66 +142,66 @@ $(function() {
     });
     
     test("iterating with .first() and .next()", function() {
-        var jdoc = jDoc(library).deepMatch('title');
+        var jdoc = jDoc(library).match('title', true);
         
         var result = [];
-        for (var current = jdoc.first(); current.hasValue(); current = current.next()) {
-            result.push(current.json());
+        for (var current = jdoc.first(); current.exists(); current = current.next()) {
+            result.push(current.value());
         }
         
         deepEqual(result, ['Harry Potter', 'Brief History of time', 'Lord of the Rings']);
     });
     
     test("iterating with .count() and .get()", function() {
-        var jdoc = jDoc(library).deepMatch('title');
+        var jdoc = jDoc(library).match('title', true);
         
         var result = [];
         for (var index = 0; index < jdoc.count(); ++index) {
-            result.push(jdoc.get(index).json());
+            result.push(jdoc.get(index).value());
         }
         
         deepEqual(result, ['Harry Potter', 'Brief History of time', 'Lord of the Rings']);
     });
     
     test("iterating with .each()", function() {
-        var jdoc = jDoc(library).deepMatch('title');
+        var jdoc = jDoc(library).match('title', true);
         
         var result = [];
         jdoc.each(function(jdoc) {
-            result.push(jdoc.json());
+            result.push(jdoc.value());
         });
         
         deepEqual(result, ['Harry Potter', 'Brief History of time', 'Lord of the Rings']);
     });
     
-    test("deepMatch('title').where(...)", function() {
-        var jdoc = jDoc(library).deepMatch('title').where(function(jdoc) {
+    test("match('title', true).where(...)", function() {
+        var jdoc = jDoc(library).match('title', true).where(function(jdoc) {
             return jdoc.text().split(' ').length > 3;
         });
         
         var result = [];
         jdoc.each(function(jdoc) {
-            result.push(jdoc.json());
+            result.push(jdoc.value());
         });
         
         deepEqual(result, ['Brief History of time', 'Lord of the Rings']);
     });
     
-    test("deepMatch('title').union(jDoc(library).deepMatch('name'))", function() {
-        var titles = jDoc(library).deepMatch('title');
-        var names = jDoc(library).deepMatch('name');
+    test("match('title', true).union(jDoc(library).match('name', true))", function() {
+        var titles = jDoc(library).match('title', true);
+        var names = jDoc(library).match('name', true);
         var union = titles.union(names);
         
         var result = [];
         union.each(function(jdoc) {
-            result.push(jdoc.json());
+            result.push(jdoc.value());
         });
         
         deepEqual(result, ['Harry Potter', 'Brief History of time', 'Lord of the Rings', 'My Library', 'Childrens', 'Science', 'Fiction']);
     });
     
-    test("deepMatch('title').select(...)", function() {
-        var result = jDoc(library).deepMatch('title').select(function(jdoc) {
+    test("match('title', true).map(...)", function() {
+        var result = jDoc(library).match('title', true).map(function(jdoc) {
             return jdoc.text().length;
         });
         
@@ -223,82 +223,82 @@ $(function() {
 		equal(result.count(), 8, 'count');
 	});
 	
-	test("at('.')", function() {
-        var jdoc = jDoc(library).at('.');
+	test("select('.')", function() {
+        var jdoc = jDoc(library).select('.');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 1, 'count');
 	});
 	
-    test("at('name')", function() {
-        var jdoc = jDoc(library).at('name');
+    test("select('name')", function() {
+        var jdoc = jDoc(library).select('name');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 1, 'count');
         equal(jdoc.text(), 'My Library', 'text')
     });
 	
-    test("at('/name')", function() {
-        var jdoc = jDoc(library).at('/name');
+    test("select('/name')", function() {
+        var jdoc = jDoc(library).select('/name');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 1, 'count');
         equal(jdoc.text(), 'My Library', 'text')
     });
     
-    test("at('address/street')", function() {
-        var jdoc = jDoc(library).at('address/street');
+    test("select('address/street')", function() {
+        var jdoc = jDoc(library).select('address/street');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 1, 'count');
         equal(jdoc.text(), 'Mockingbird Lane', 'text')
     });
     
-    test("at('books')", function() {
-        var jdoc = jDoc(library).at('books');
+    test("select('books')", function() {
+        var jdoc = jDoc(library).select('books');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 3, 'count');
     });
     
-    test("at('books/chapters')", function() {
-        var jdoc = jDoc(library).at('books/chapters');
+    test("select('books/chapters')", function() {
+        var jdoc = jDoc(library).select('books/chapters');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 6, 'count');
     });
     
-    test("at('//chapters')", function() {
-        var jdoc = jDoc(library).at('//chapters');
+    test("select('//chapters')", function() {
+        var jdoc = jDoc(library).select('//chapters');
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 6, 'count');
     });
     
-    test("at('chapters')", function() {
-        var jdoc = jDoc(library).at('chapters');
+    test("select('chapters')", function() {
+        var jdoc = jDoc(library).select('chapters');
         
         equal(jdoc.any(), false, 'any');
         equal(jdoc.count(), 0, 'count');
     });
     
-    test("at('does-not-exist')", function() {
-        var jdoc = jDoc(library).at('does-not-exist');
+    test("select('does-not-exist')", function() {
+        var jdoc = jDoc(library).select('does-not-exist');
         
         equal(jdoc.any(), false, 'any');
         equal(jdoc.count(), 0, 'count');
     });
 	
-	test("at('@*')", function() {
-		var result = jDoc(library).at('@*');
+	test("select('@*')", function() {
+		var result = jDoc(library).select('@*');
         
 		equal(result.any(), true, 'any');
 		equal(result.count(), 1, 'count');
 		equal(result.text(), '2007-17-7', 'text');
 	});
 	
-	test("at('//@*')", function() {
-		var result = jDoc(library).at('//@*');
+	test("select('//@*')", function() {
+		var result = jDoc(library).select('//@*');
         
 		equal(result.any(), true, 'any');
 		equal(result.count(), 2, 'count');
@@ -306,22 +306,22 @@ $(function() {
 		equal(result.next().text(), 'true', 'next.text');
 	});
 	
-	test("at('*')", function() {
-		var result = jDoc(library).at('*');
+	test("select('*')", function() {
+		var result = jDoc(library).select('*');
         
 		equal(result.any(), true, 'any');
 		equal(result.count(), 8, 'count');
 	});
 	
-	test("at('//*')", function() {
-		var result = jDoc(library).at('//*');
+	test("select('//*')", function() {
+		var result = jDoc(library).select('//*');
         
 		equal(result.any(), true, 'any');
 		equal(result.count(), 72, 'count');
 	});
 	
-	test("at('//*') cached", function() {
-		var result = jDoc(library).at('//*');
+	test("select('//*') cached", function() {
+		var result = jDoc(library).select('//*');
         
 		equal(result.any(), true, 'any');
 		equal(result.count(), 72, 'count');
