@@ -29,7 +29,7 @@
      * Constructor: jDoc
      *   Wrap a JSON object in a jDoc object.
      * Parameters:
-     * 	 json - object to wrap
+     *   json - object to wrap
      * -OR-
      *   nodes - list of selected nodes
      *   index - index of selected node
@@ -80,10 +80,11 @@
     // define empty jDoc instance
     var _empty = new jDoc(null);
     
-    // private jDoc functions	
+    // private jDoc functions
     var _push = function(array, json) {
+        var i;
         if (typeof json === 'object' && typeof json.length === 'number') {
-            for (var i = 0; i < json.length; ++i) {
+            for (i = 0; i < json.length; ++i) {
                 array.push(json[i]);
             }
         } else {
@@ -94,7 +95,8 @@
     var _match = function(jdoc, condition, recurse, result) {
         jdoc.each(function(jdoc) {
             var json = jdoc.json();
-            for (var key in json) {
+            var key;
+            for (key in json) {
                 var value = json[key];
                 
                 // skip functions
@@ -140,12 +142,13 @@
     
     var _createSelectorExpression = function(selector) {
         if (typeof selector !== 'string' || selector === '') {
-            throw new Exception('invalid selector');
+            throw new Error('invalid selector');
         }
         var parts = selector.split('/');
         var deep = false;
         var code = 'this';
-        for (var i = 0; i < parts.length; ++i) {
+        var i;
+        for (i = 0; i < parts.length; ++i) {
             var part = parts[i];
             switch (part) {
             case '':
@@ -157,7 +160,7 @@
                 
                 // check if we have three consecutive slashes (i.e. ///)
                 if (deep) {
-                    throw new Exception('invalid selector');
+                    throw new Error('invalid selector');
                 }
                 deep = true;
                 continue;
@@ -167,8 +170,7 @@
                 break;
             case '..':
                 
-                throw new Exception('unsupported .. operation in selector')
-                break;
+                throw new Error('unsupported .. operation in selector');
             case '*':
                 if (deep) {
                     code += '.deepMatch(/^[^@#].*$/)';
@@ -196,7 +198,7 @@
         
         // check if we have a trailing slash (e.g. foo/)
         if (deep) {
-            throw new Exception('invalid selector');
+            throw new Error('invalid selector');
         }
         return code;
     };
@@ -250,7 +252,10 @@
      *   context - context for function invocation
      */
     jDoc.prototype.each = function(callback, context) {
-        for (var i = 0, value = this._list[0]; typeof value !== 'undefined' && callback.call(context, new jDoc(value)) !== false; value = this._list[++i]) {
+        var i, value;
+        for (i = 0, value = this._list[0]; typeof value !== 'undefined' && callback.call(context, new jDoc(value)) !== false; value = this._list[++i]) {
+        
+            // empty body
         }
     };
     
@@ -485,5 +490,4 @@
         }
         return code.call(this);
     };
-    
 })();
