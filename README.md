@@ -21,7 +21,7 @@ Example 1: Getting the text value of the first selected node
 	var jdoc = new jDoc(json);
 	
 	// obtain the text of the first title node inside a book node
-	var result = jdoc.$('book/title').text();
+	var result = jdoc.select('book/title').text();
 	
 	// or you can use the shorthand form
 	var result = jdoc.text('book/title');
@@ -32,35 +32,34 @@ Example 2: Finding the text value of all selected nodes
 	
 	// obtain the text of all title nodes inside of all book nodes
 	var result = '';
-	jdoc.$('book/title').each(function(cur) {
+	jdoc.select('book/title').each(function(cur) {
 		result += 'title: '  + cur.text() + '\n';
 	});
 
 Selection Methods
 -----------------
-* obj.$(selector)
-* obj.match(string | regexp | function)
-* obj.deepMatch(string | regexp | function)
-* obj.attributes()
-* obj.elements()
+* jdoc.select(selector)
+* jdoc.match(string | regexp | function, [recursive])
+* jdoc.attributes()
+* jdoc.elements()
 
 Item Methods
 ------------
-* obj.hasValue()
-* obj.json([selector])
-* obj.text([selector])
+* jdoc.exists([selector])
+* jdoc.value([selector])
+* jdoc.text([selector])
 
 Collection Methods
 ------------------
-* obj.any()
-* obj.first()
-* obj.next()
-* obj.each(function(jdoc) [, context])
-* obj.get(index)
-* obj.count()
-* obj.where(function(jdoc) [, context])
-* obj.union(jdoc)
-* obj.select(function(jdoc) [, context])
+* jdoc.any()
+* jdoc.first()
+* jdoc.next()
+* jdoc.each(function(jdoc) [, context])
+* jdoc.get(index)
+* jdoc.count()
+* jdoc.where(function(jdoc) [, context])
+* jdoc.union(jdoc)
+* jdoc.map(function(jdoc) [, context])
 
 Compatibility
 -------------
@@ -71,3 +70,5 @@ Compatibility
 Update Log
 ----------
 * 0.1 - Initial release
+* 0.2 - Additionanl overloads which take selector; removed jQuery dependency; improved method names:
+        'map()' instead of 'select()', 'exists()' instead of 'hasValue()', 'value()' instead of 'json()', and 'select()' instead of '$()' 
