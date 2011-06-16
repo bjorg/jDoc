@@ -1,0 +1,15 @@
+{
+  "name"          : "jdoc",
+  "description"   : "jDoc: Turn JSON objects into queryable documents.",
+  "homepage"      : "https://github.com/bjorg/jdoc",
+  "keywords"      : ["json", "document", "query", "server", "client", "browser"],
+  "author"        : "Steve Bjorg <steve.bjorg@gmail.com> (http://twitter.com/bjorg)",
+  "contributors"  : [],
+  "dependencies"  : [],
+  "repository"    : {"type": "git", "url": "git://github.com/bjorg/jDoc.git"},
+  "main"          : "dist/jdoc-min.js",
+  "version"       : "0.2.0",
+  "engines": {
+    "node": "*"
+  } 
+}
