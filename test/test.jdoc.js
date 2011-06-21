@@ -30,10 +30,13 @@ $(function() {
             'city': 'Springfield',
             'zip': '12345',
             'state': 'MI',
-            'street': {
+            'street': [{
                 '@primary': 'true',
                 '#text': 'Mockingbird Lane'
-            }
+            }, {
+                '@primary': 'false',
+                '#text': 'Nightingale Street'
+            }]
         },
         'books': [{
             'title': 'Harry Potter',
@@ -95,8 +98,9 @@ $(function() {
         var jdoc = jDoc(library).match('address').match('street');
         
         equal(jdoc.any(), true, 'any');
-        equal(jdoc.count(), 1, 'count');
+        equal(jdoc.count(), 2, 'count');
         equal(jdoc.text(), 'Mockingbird Lane', 'text')
+        equal(jdoc.next().text(), 'Nightingale Street', 'next.text')
     });
     
     test("match('books')", function() {
@@ -250,8 +254,9 @@ $(function() {
         var jdoc = jDoc(library).select('address/street');
         
         equal(jdoc.any(), true, 'any');
-        equal(jdoc.count(), 1, 'count');
+        equal(jdoc.count(), 2, 'count');
         equal(jdoc.text(), 'Mockingbird Lane', 'text')
+        equal(jdoc.next().text(), 'Nightingale Street', 'next.text')
     });
     
     test("select('books')", function() {
@@ -273,6 +278,15 @@ $(function() {
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 6, 'count');
+    });
+    
+    test("select('address//@primary')", function() {
+        var jdoc = jDoc(library).select('address//@primary');
+        
+        equal(jdoc.any(), true, 'any');
+        equal(jdoc.count(), 2, 'count');
+        equal(jdoc.text(), 'true', 'text')
+        equal(jdoc.next().text(), 'false', 'next.text')
     });
     
     test("select('chapters')", function() {
@@ -301,9 +315,13 @@ $(function() {
 		var result = jDoc(library).select('//@*');
         
 		equal(result.any(), true, 'any');
-		equal(result.count(), 2, 'count');
+		equal(result.count(), 3, 'count');
 		equal(result.text(), '2007-17-7', 'text');
 		equal(result.next().text(), 'true', 'next.text');
+		equal(result.next().next().text(), 'false', 'next.next.text');
+		equal(result.get(0).text(), '2007-17-7', 'get(0).text');
+		equal(result.get(1).text(), 'true', 'get(1).text');
+		equal(result.get(2).text(), 'false', 'get(2).text');
 	});
 	
 	test("select('*')", function() {
@@ -317,13 +335,13 @@ $(function() {
 		var result = jDoc(library).select('//*');
         
 		equal(result.any(), true, 'any');
-		equal(result.count(), 72, 'count');
+		equal(result.count(), 73, 'count');
 	});
 	
 	test("select('//*') cached", function() {
 		var result = jDoc(library).select('//*');
         
 		equal(result.any(), true, 'any');
-		equal(result.count(), 72, 'count');
+		equal(result.count(), 73, 'count');
 	});
 });
