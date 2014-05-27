@@ -86,7 +86,7 @@
     // private jDoc functions
     var _push = function(array, json) {
         var i;
-        if (typeof json === 'object' && typeof json.length === 'number') {
+        if (typeof json === 'object' && json !== null && typeof json.length === 'number') {
             for (i = 0; i < json.length; ++i) {
                 array.push(json[i]);
             }
@@ -114,7 +114,7 @@
                     if (recurse) {
                     
                         // only recurse into objects
-                        if (typeof value === 'object') {
+                        if (typeof value === 'object' && value !== null) {
                             if (typeof value.length === 'number') {
                                 _match(new jDoc(value, 0), condition, recurse, result);
                             } else {
