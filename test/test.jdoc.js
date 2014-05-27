@@ -24,6 +24,7 @@ $(function() {
     module('jDoc');
     
     var library = {
+        'id': null,
         'name': 'My Library',
         '@open': '2007-17-7',
         'address': {
@@ -79,7 +80,17 @@ $(function() {
         
         equal(jdoc.any(), true, 'any');
         equal(jdoc.count(), 1, 'count');
-        equal(jdoc.text(), 'My Library', 'text')
+        equal(jdoc.value(), 'My Library', 'value');
+        equal(jdoc.text(), 'My Library', 'text');
+    });
+
+    test("match('id')", function() {
+        var jdoc = jDoc(library).match('id');
+        
+        equal(jdoc.any(), true, 'any');
+        equal(jdoc.count(), 1, 'count');
+        equal(jdoc.value(), null, 'value');
+        equal(jdoc.text(), null, 'text');
     });
     
     test("text('name')", function() {
@@ -224,7 +235,7 @@ $(function() {
 		var result = jDoc(library).elements();
         
 		equal(result.any(), true, 'any');
-		equal(result.count(), 8, 'count');
+		equal(result.count(), 9, 'count');
 	});
 	
 	test("select('.')", function() {
@@ -328,20 +339,20 @@ $(function() {
 		var result = jDoc(library).select('*');
         
 		equal(result.any(), true, 'any');
-		equal(result.count(), 8, 'count');
+		equal(result.count(), 9, 'count');
 	});
 	
 	test("select('//*')", function() {
 		var result = jDoc(library).select('//*');
         
 		equal(result.any(), true, 'any');
-		equal(result.count(), 73, 'count');
+		equal(result.count(), 74, 'count');
 	});
 	
 	test("select('//*') cached", function() {
 		var result = jDoc(library).select('//*');
         
 		equal(result.any(), true, 'any');
-		equal(result.count(), 73, 'count');
+		equal(result.count(), 74, 'count');
 	});
 });
